@@ -10,7 +10,6 @@ export interface MusicManager {
   next(): void;
   isPaused(): boolean;
   setTrack(index: number): void;
-  timeUpdate(): void;
   pause(): void;
   destroy(): void;
 
@@ -19,12 +18,11 @@ export interface MusicManager {
 }
 
 export interface MusicManagerOptions {
-  duration: HTMLDivElement;
   onNext?: (song: Song) => void;
+  onTimeUpdate?: (currentTime: number, duration: number) => void;
 }
 
 export function createMusicManager({
-  duration,
   ...options
 }: MusicManagerOptions): MusicManager {
   const context = new AudioContext();
@@ -33,10 +31,6 @@ export function createMusicManager({
   let source: MediaElementAudioSourceNode | undefined;
 
   let onDestroy: () => void;
-
-  const updateDuration = (percent: number) => {
-    duration.style.setProperty("width", `${percent}%`);
-  };
 
   return {
     queue: 0,
@@ -51,6 +45,9 @@ export function createMusicManager({
       return context.state === "suspended" || (audio != null && audio.paused);
     },
     init() {
+      const onTimeUpdate = () => {
+        options.onTimeUpdate?.(audio.currentTime, audio.duration);
+      };
       const onEnded = () => {
         this.next();
         this.play();
@@ -60,12 +57,12 @@ export function createMusicManager({
       source.connect(analyser);
       analyser.connect(context.destination);
 
-      audio.addEventListener("timeupdate", this.timeUpdate);
+      audio.addEventListener("timeupdate", onTimeUpdate);
       audio.addEventListener("ended", onEnded);
       this.setTrack(0);
 
       onDestroy = () => {
-        audio.removeEventListener("timeupdate", this.timeUpdate);
+        audio.removeEventListener("timeupdate", onTimeUpdate);
         audio.removeEventListener("ended", onEnded);
       };
     },
@@ -85,8 +82,6 @@ export function createMusicManager({
       const song = songs[index];
 
       audio.src = song.url;
-
-      updateDuration(0);
       options?.onNext?.(song);
 
       if (wasPlaying) {
@@ -98,9 +93,6 @@ export function createMusicManager({
     },
     next() {
       this.setTrack(this.queue >= songs.length - 1 ? 0 : this.queue + 1);
-    },
-    timeUpdate() {
-      updateDuration((audio.currentTime / audio.duration) * 100);
     },
     destroy() {
       this.pause();

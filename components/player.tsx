@@ -16,9 +16,16 @@ export default function MusicPlayer() {
     const duration = durationRef.current;
     if (!duration) return;
 
+    const updateDuration = (percent: number) => {
+      duration.style.setProperty("width", `${percent}%`);
+    };
+
     const manager = createMusicManager({
-      duration,
+      onTimeUpdate: (currentTime, duration) => {
+        updateDuration((currentTime / duration) * 100);
+      },
       onNext: (song) => {
+        updateDuration(0);
         setSong(song);
       },
     });
@@ -72,7 +79,7 @@ export default function MusicPlayer() {
           </div>
         ) : null}
       </div>
-      <div className="mt-auto mx-auto w-full max-w-[250px] h-[100px] sm:mr-0">
+      <div className="mt-auto mx-auto w-full max-w-[250px] h-[150px] sm:mr-0">
         {analyser && (
           <MusicVisualizer
             className="size-full"
