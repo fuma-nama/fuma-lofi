@@ -72,13 +72,17 @@ export default function MusicPlayer() {
           </div>
         ) : null}
       </div>
-      <div className="mt-auto ml-auto w-full max-w-[400px]">
+      <div className="mt-auto mx-auto w-full max-w-[250px] h-[100px] sm:mr-0">
         {analyser && (
           <MusicVisualizer
+            className="size-full"
             analyser={analyser}
             fftSize={4096}
+            barWidth={2}
+            gap={6}
+            smoothingTimeConstant={0.8}
             minDecibels={-100}
-            maxDecibels={10}
+            maxDecibels={0}
           />
         )}
       </div>

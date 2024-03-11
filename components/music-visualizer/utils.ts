@@ -1,13 +1,3 @@
-interface CustomCanvasRenderingContext2D extends CanvasRenderingContext2D {
-  roundRect: (
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    radius: number,
-  ) => void;
-}
-
 export const calculateBarData = (
   frequencyData: Uint8Array,
   width: number,
@@ -43,9 +33,7 @@ export const draw = (
   backgroundColor: string,
   barColor: string,
 ): void => {
-  const amp = canvas.height / 2;
-
-  const ctx = canvas.getContext("2d") as CustomCanvasRenderingContext2D;
+  const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -59,13 +47,13 @@ export const draw = (
     ctx.fillStyle = barColor;
 
     const x = i * (barWidth + gap);
-    const y = canvas.height - dp / 2;
+    const y = canvas.height - (dp || 1) / 2;
     const w = barWidth;
     const h = dp || 1;
 
-    ctx.beginPath();
     if (ctx.roundRect) {
       // making sure roundRect is supported by the browser
+      ctx.beginPath();
       ctx.roundRect(x, y, w, h, 20);
       ctx.fill();
     } else {

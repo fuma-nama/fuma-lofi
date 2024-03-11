@@ -2,20 +2,18 @@
 From https://github.com/samhirtarif/react-audio-visualize
  */
 
-import { type ReactElement, useCallback, useEffect, useRef } from "react";
+import {
+  type CanvasHTMLAttributes,
+  type ReactElement,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import { calculateBarData, draw } from "./utils";
 
-export interface Props {
+export interface Props extends CanvasHTMLAttributes<HTMLCanvasElement> {
   analyser: AnalyserNode;
 
-  /**
-   * Width of the visualization. Default" "100%"
-   */
-  width?: number | string;
-  /**
-   * Height of the visualization. Default" "100%"
-   */
-  height?: number | string;
   /**
    * Width of each individual bar in the visualization. Default: `2`
    */
@@ -63,7 +61,7 @@ export interface Props {
    */
   minDecibels?: number;
   /**
-   * A double within the range 0 to 1 (0 meaning no time averaging). The default value is 0.8.
+   * A double within the range 0 to 1 (0 meaning no time averaging).
    * If 0 is set, there is no averaging done, whereas a value of 1 means "overlap the previous and current buffer quite a lot while computing the value",
    * which essentially smooths the changes across
    * For more details {@link https://developer.mozilla.org/en-US/docs/Web/API/AnalyserNode/smoothingTimeConstant MDN AnalyserNode: smoothingTimeConstant property}
@@ -74,8 +72,6 @@ export interface Props {
 
 export const MusicVisualizer: (props: Props) => ReactElement = ({
   analyser,
-  width = "100%",
-  height = "100%",
   barWidth = 2,
   gap = 1,
   backgroundColor = "transparent",
@@ -84,6 +80,7 @@ export const MusicVisualizer: (props: Props) => ReactElement = ({
   maxDecibels = -10,
   minDecibels = -90,
   smoothingTimeConstant = 0.4,
+  ...props
 }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -125,5 +122,5 @@ export const MusicVisualizer: (props: Props) => ReactElement = ({
     );
   };
 
-  return <canvas ref={canvasRef} width={width} height={height} />;
+  return <canvas ref={canvasRef} {...props} />;
 };
