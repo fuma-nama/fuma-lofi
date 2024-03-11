@@ -6,6 +6,7 @@ import { createMusicManager, MusicManager } from "@/lib/music-manager";
 import { createShortcutManager } from "@/lib/shortcut-manager";
 import { MusicVisualizer } from "@/components/music-visualizer";
 import { formatSeconds } from "@/lib/format";
+import { AnimatePresence, motion } from "framer-motion";
 
 export default function MusicPlayer() {
   const durationRef = useRef<HTMLDivElement>(null);
@@ -13,6 +14,7 @@ export default function MusicPlayer() {
 
   const managerRef = useRef<MusicManager>();
   const [song, setSong] = useState<Song>();
+  const [paused, setPaused] = useState(true);
   const [analyser, setAnalyser] = useState<AnalyserNode>();
 
   useEffect(() => {
@@ -24,6 +26,9 @@ export default function MusicPlayer() {
     };
 
     const manager = createMusicManager({
+      onStateChange: () => {
+        setPaused(manager.isPaused());
+      },
       onTimeUpdate: (currentTime, duration) => {
         if (timeLabelRef.current) {
           timeLabelRef.current.innerText = formatSeconds(currentTime);
@@ -62,28 +67,35 @@ export default function MusicPlayer() {
       className="relative flex flex-col h-screen p-12 z-[2] text-purple-100 sm:p-24"
       onClick={onClick}
     >
-      <h1 className="text-9xl font-light leading-[0.9] tracking-[-0.1em]">
-        Lofi Fuma
-      </h1>
+      <AnimatedTitle text={paused ? "Click to Play" : "Lofi Fuma"} />
       <div className="w-full max-w-[480px] mt-2">
         <div className="h-1 border border-purple-100/30">
           <div ref={durationRef} className="w-0 h-full bg-purple-100" />
         </div>
-        {song ? (
-          <div className="flex flex-row items-center gap-4 mt-2 rounded-xl p-3">
-            {song.picture && (
-              <img
-                alt="picture"
-                src={song.picture}
-                className="size-14 rounded-md"
-              />
-            )}
-            <div>
-              <p className="font-medium">{song.name}</p>
-              <p className="text-xs text-purple-200">{song.author}</p>
-            </div>
-          </div>
-        ) : null}
+        <AnimatePresence mode="wait">
+          {song ? (
+            <motion.div
+              key={song.url}
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -10, opacity: 0 }}
+              transition={{ ease: "easeInOut", duration: 0.3 }}
+              className="flex flex-row items-center gap-4 mt-2 rounded-xl p-3"
+            >
+              {song.picture && (
+                <img
+                  alt="picture"
+                  src={song.picture}
+                  className="size-14 rounded-md"
+                />
+              )}
+              <div>
+                <p className="font-medium">{song.name}</p>
+                <p className="text-xs text-purple-200">{song.author}</p>
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </div>
       <div className="mt-auto mx-auto w-full max-w-[250px] h-[150px] sm:mr-0">
         {analyser && (
@@ -104,5 +116,33 @@ export default function MusicPlayer() {
       </div>
       <Gradient />
     </main>
+  );
+}
+
+function AnimatedTitle({ text }: { text: string }) {
+  return (
+    <h1 className="text-9xl font-light leading-[0.9] tracking-[-0.1em]">
+      <AnimatePresence mode="wait">
+        {text.split("").map((c, i) => (
+          <motion.span
+            className="inline-block"
+            style={{
+              width: c === " " ? 24 : undefined,
+            }}
+            key={`${c}-${i}`}
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -20, opacity: 0, transition: { duration: 0.1 } }}
+            transition={{
+              ease: "easeInOut",
+              delay: i * 0.05,
+              duration: 0.2,
+            }}
+          >
+            {c}
+          </motion.span>
+        ))}
+      </AnimatePresence>
+    </h1>
   );
 }
