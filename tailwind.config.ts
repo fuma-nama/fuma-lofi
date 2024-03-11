@@ -8,10 +8,31 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      keyframes: {
+        "popover-in": {
+          from: {
+            transform: "translateY(20px)",
+            opacity: "0",
+          },
+          to: {
+            transform: "translateY(0px)",
+            opacity: "1",
+          },
+        },
+        "popover-out": {
+          from: {
+            transform: "translateY(0px)",
+            opacity: "1",
+          },
+          to: {
+            transform: "translateY(20px)",
+            opacity: "0",
+          },
+        },
+      },
+      animation: {
+        "popover-in": "popover-in ease-in-out 0.2s",
+        "popover-out": "popover-out ease-out 0.2s",
       },
     },
   },
