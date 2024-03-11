@@ -67,6 +67,8 @@ export function createMusicManager({
       };
     },
     play() {
+      // When AudioContext is initialized before the first interaction, it is suspended
+      // we have to resume it
       if (context.state === "suspended") {
         void context.resume();
       }

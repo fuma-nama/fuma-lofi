@@ -5,9 +5,12 @@ import { Song } from "@/music/data";
 import { createMusicManager, MusicManager } from "@/lib/music-manager";
 import { createShortcutManager } from "@/lib/shortcut-manager";
 import { MusicVisualizer } from "@/components/music-visualizer";
+import { formatSeconds } from "@/lib/format";
 
 export default function MusicPlayer() {
   const durationRef = useRef<HTMLDivElement>(null);
+  const timeLabelRef = useRef<HTMLParagraphElement>(null);
+
   const managerRef = useRef<MusicManager>();
   const [song, setSong] = useState<Song>();
   const [analyser, setAnalyser] = useState<AnalyserNode>();
@@ -22,6 +25,9 @@ export default function MusicPlayer() {
 
     const manager = createMusicManager({
       onTimeUpdate: (currentTime, duration) => {
+        if (timeLabelRef.current) {
+          timeLabelRef.current.innerText = formatSeconds(currentTime);
+        }
         updateDuration((currentTime / duration) * 100);
       },
       onNext: (song) => {
@@ -92,6 +98,9 @@ export default function MusicPlayer() {
             maxDecibels={0}
           />
         )}
+        <p ref={timeLabelRef} className="text-xs text-blue-200 mt-2">
+          --:--
+        </p>
       </div>
       <Gradient />
     </main>
