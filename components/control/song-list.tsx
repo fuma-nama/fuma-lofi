@@ -33,7 +33,7 @@ function Item({
   return (
     <button
       className={cn(
-        "flex flex-row items-center gap-4 rounded-xl p-2 transition-colors",
+        "flex flex-row text-left items-center gap-3 rounded-xl p-2 transition-colors",
         playing ? "bg-purple-400/20" : "hover:bg-purple-200/5",
       )}
       onClick={() => {

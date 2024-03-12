@@ -125,7 +125,7 @@ export default function MusicPlayer() {
           duration: 1,
         }}
       >
-        <Gradient />
+        <Gradient currentId={currentIndex} />
       </motion.div>
     </motion.main>
   );

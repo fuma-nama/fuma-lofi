@@ -19,17 +19,22 @@ export interface QueueManager {
   getPendingSongs(): QueueItem[];
   getCurrentSong(): QueueItem | undefined;
   setIndex(id: number): void;
+  setSongs(songs: Song[]): void;
 
   previous(): void;
   next(): void;
 }
 
 export function createQueueManager(options: QueueManagerOptions): QueueManager {
-  const items: QueueItem[] = songs.map((song, i) => ({ id: i, ...song }));
-
   return {
     currentIndex: -1,
-    songs: items,
+    songs: [],
+    setSongs(songs: Song[]) {
+      this.songs = songs.map((song, i) => ({ id: i, ...song }));
+
+      // Ensure index is in the songs list
+      this.setIndex(this.currentIndex === -1 ? 0 : this.currentIndex);
+    },
     getPendingSongs() {
       return this.songs.slice(this.currentIndex + 1);
     },
@@ -39,7 +44,8 @@ export function createQueueManager(options: QueueManagerOptions): QueueManager {
     setIndex(id) {
       let target: number;
 
-      if (id >= this.songs.length) target = 0;
+      if (this.songs.length === 0) target = -1;
+      else if (id >= this.songs.length) target = 0;
       else if (id < 0) target = songs.length - 1;
       else target = id;
 

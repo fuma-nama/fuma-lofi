@@ -4,8 +4,10 @@ import {
   QueueItem,
   QueueManager,
 } from "@/lib/queue-manager";
+import { createStorageManager, StorageManager } from "@/lib/storage-manager";
 
 export interface MusicManager {
+  storageManager: StorageManager;
   queueManager: QueueManager;
   analyser: AnalyserNode;
 
@@ -43,6 +45,7 @@ export function createMusicManager({
     manager.play();
   };
 
+  const storageManager = createStorageManager();
   const queueManager = createQueueManager({
     onUpdate: (song) => {
       if (song) manager.setPlaying(song);
@@ -59,11 +62,12 @@ export function createMusicManager({
     audio.addEventListener("play", onStateChange);
     audio.addEventListener("pause", onStateChange);
     audio.addEventListener("ended", onEnded);
-    queueManager.setIndex(0);
+    queueManager.setSongs(storageManager.loadSongs());
   };
 
   const manager: MusicManager = {
     queueManager,
+    storageManager,
     analyser,
     getTime(): number {
       return audio.currentTime;

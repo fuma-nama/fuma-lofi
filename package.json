@@ -10,6 +10,7 @@
     "generate:music": "node ./music/generate.js"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.0.7",
     "@react-spring/three": "^9.7.3",
     "@react-three/drei": "^9.56.5",
