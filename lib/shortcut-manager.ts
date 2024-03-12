@@ -17,11 +17,11 @@ export function createShortcutManager({
     onPress(event: KeyboardEvent) {
       switch (event.key) {
         case "ArrowUp":
-          musicManager.previous();
+          musicManager.queueManager.previous();
           event.preventDefault();
           break;
         case "ArrowDown":
-          musicManager.next();
+          musicManager.queueManager.next();
           event.preventDefault();
           break;
         case "ArrowLeft":

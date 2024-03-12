@@ -1,15 +1,17 @@
 import { Song } from "@/music/data";
-import songs from "@/music/data.json";
+import {
+  createQueueManager,
+  QueueItem,
+  QueueManager,
+} from "@/lib/queue-manager";
 
 export interface MusicManager {
-  queue: number;
+  queueManager: QueueManager;
   analyser: AnalyserNode;
-  init(): void;
+
   play(): void;
-  previous(): void;
-  next(): void;
   isPaused(): boolean;
-  setTrack(index: number): void;
+  setPlaying(song: Song): void;
   pause(): void;
   destroy(): void;
 
@@ -18,7 +20,7 @@ export interface MusicManager {
 }
 
 export interface MusicManagerOptions {
-  onNext?: (song: Song) => void;
+  onNext?: (song: QueueItem | undefined) => void;
   onStateChange?: () => void;
   onTimeUpdate?: (currentTime: number, duration: number) => void;
 }
@@ -29,12 +31,39 @@ export function createMusicManager({
   const context = new AudioContext();
   const analyser = context.createAnalyser();
   const audio = new Audio();
-  let source: MediaElementAudioSourceNode | undefined;
 
-  let onDestroy: () => void;
+  const onStateChange = () => {
+    options.onStateChange?.();
+  };
+  const onTimeUpdate = () => {
+    options.onTimeUpdate?.(audio.currentTime, audio.duration);
+  };
+  const onEnded = () => {
+    manager.queueManager.next();
+    manager.play();
+  };
 
-  return {
-    queue: 0,
+  const queueManager = createQueueManager({
+    onUpdate: (song) => {
+      if (song) manager.setPlaying(song);
+      options?.onNext?.(song);
+    },
+  });
+
+  const init = () => {
+    const source = context.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(context.destination);
+
+    audio.addEventListener("timeupdate", onTimeUpdate);
+    audio.addEventListener("play", onStateChange);
+    audio.addEventListener("pause", onStateChange);
+    audio.addEventListener("ended", onEnded);
+    queueManager.setIndex(0);
+  };
+
+  const manager: MusicManager = {
+    queueManager,
     analyser,
     getTime(): number {
       return audio.currentTime;
@@ -44,35 +73,6 @@ export function createMusicManager({
     },
     isPaused(): boolean {
       return context.state === "suspended" || (audio != null && audio.paused);
-    },
-    init() {
-      const onStateChange = () => {
-        options.onStateChange?.();
-      };
-      const onTimeUpdate = () => {
-        options.onTimeUpdate?.(audio.currentTime, audio.duration);
-      };
-      const onEnded = () => {
-        this.next();
-        this.play();
-      };
-
-      source = context.createMediaElementSource(audio);
-      source.connect(analyser);
-      analyser.connect(context.destination);
-
-      audio.addEventListener("timeupdate", onTimeUpdate);
-      audio.addEventListener("play", onStateChange);
-      audio.addEventListener("pause", onStateChange);
-      audio.addEventListener("ended", onEnded);
-      this.setTrack(0);
-
-      onDestroy = () => {
-        audio.removeEventListener("play", onStateChange);
-        audio.removeEventListener("pause", onStateChange);
-        audio.removeEventListener("timeupdate", onTimeUpdate);
-        audio.removeEventListener("ended", onEnded);
-      };
     },
     async play() {
       // When AudioContext is initialized before the first interaction, it is suspended
@@ -86,27 +86,24 @@ export function createMusicManager({
     pause() {
       void audio.pause();
     },
-    setTrack(index: number) {
-      this.queue = index;
+    setPlaying(song) {
       const wasPlaying = !this.isPaused();
-      const song = songs[index];
-
       audio.src = song.url;
-      options?.onNext?.(song);
 
       if (wasPlaying) {
         this.play();
       }
     },
-    previous() {
-      this.setTrack(this.queue <= 0 ? songs.length - 1 : this.queue - 1);
-    },
-    next() {
-      this.setTrack(this.queue >= songs.length - 1 ? 0 : this.queue + 1);
-    },
     destroy() {
       this.pause();
-      onDestroy();
+      audio.removeEventListener("play", onStateChange);
+      audio.removeEventListener("pause", onStateChange);
+      audio.removeEventListener("timeupdate", onTimeUpdate);
+      audio.removeEventListener("ended", onEnded);
     },
   };
+
+  init();
+
+  return manager;
 }

@@ -96,9 +96,12 @@ export const MusicVisualizer: (props: Props) => ReactElement = ({
   const report = useCallback(() => {
     if (analyser.context.state === "closed") return;
 
-    const data = new Uint8Array(analyser?.frequencyBinCount);
+    const data = new Uint8Array(analyser.frequencyBinCount);
 
-    analyser?.getByteFrequencyData(data);
+    if (analyser.context.state === "running") {
+      analyser.getByteFrequencyData(data);
+    }
+
     processFrequencyData(data);
     requestAnimationFrame(report);
   }, [analyser]);
