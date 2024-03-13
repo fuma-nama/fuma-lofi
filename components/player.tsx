@@ -14,15 +14,15 @@ export default function MusicPlayer() {
   const timelineRef = useRef<DurationControl>();
   const timeLabelRef = useRef<HTMLParagraphElement>(null);
 
-  const [currentIndex, setCurrentIndex] = useState(-1);
-  const [paused, setPaused] = useState(true);
   const [musicManager, setMusicManager] = useState<MusicManager>();
+  // trigger re-renders
+  const [, setDigit] = useState(0);
+
+  const paused = musicManager?.isPaused() ?? true;
+  const currentSong = musicManager?.queueManager.getCurrentSong();
 
   useEffect(() => {
     const manager = createMusicManager({
-      onStateChange: () => {
-        setPaused(manager.isPaused());
-      },
       onTimeUpdate: (currentTime, duration) => {
         if (timeLabelRef.current) {
           timeLabelRef.current.innerText = formatSeconds(currentTime);
@@ -30,8 +30,14 @@ export default function MusicPlayer() {
 
         timelineRef.current?.((currentTime / duration) * 100);
       },
-      onNext(song) {
-        setCurrentIndex(song?.id ?? -1);
+      onStateChange: () => {
+        setDigit((prev) => prev + 1);
+      },
+      onNext() {
+        setDigit((prev) => prev + 1);
+      },
+      onSongListUpdated() {
+        setDigit((prev) => prev + 1);
       },
     });
 
@@ -76,9 +82,7 @@ export default function MusicPlayer() {
       <div className="w-full max-w-[500px] mt-6">
         <Timeline musicManager={musicManager} durationRef={timelineRef} />
         <AnimatePresence mode="wait" initial={false}>
-          {musicManager && currentIndex !== -1 ? (
-            <SongDisplay song={musicManager.queueManager.songs[currentIndex]} />
-          ) : null}
+          {currentSong ? <SongDisplay song={currentSong} /> : null}
         </AnimatePresence>
       </div>
       <div
@@ -118,7 +122,7 @@ export default function MusicPlayer() {
           duration: 1,
         }}
       >
-        <Gradient currentId={currentIndex} />
+        <Gradient currentId={currentSong?.id ?? 0} />
       </motion.div>
     </motion.main>
   );

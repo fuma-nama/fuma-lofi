@@ -8,13 +8,20 @@ import {
 import { SongList } from "@/components/control/song-list";
 import { TimeControls } from "@/components/control/time-controls";
 import { MusicManager } from "@/lib/music-manager";
+import { cn } from "@/lib/cn";
+import { buttonVariants } from "@/components/ui/button";
 
 export function Menu({ musicManager }: { musicManager: MusicManager }) {
   return (
     <Popover>
       <PopoverTrigger
         aria-label="Menu"
-        className="inline-flex items-center gap-2 text-sm font-medium p-2 -m-2 rounded-md transition-colors hover:bg-purple-200/20 focus-visible:outline-none max-md:absolute max-md:top-8 max-md:right-8"
+        className={cn(
+          buttonVariants({
+            variant: "ghost",
+            className: "max-md:absolute max-md:top-8 max-md:right-8",
+          }),
+        )}
       >
         <svg
           width="24"
@@ -36,11 +43,16 @@ export function Menu({ musicManager }: { musicManager: MusicManager }) {
       <PopoverContent>
         <SongList musicManager={musicManager} />
         <TimeControls musicManager={musicManager} />
-        <div className="flex flex-row mt-4">
+        <div className="flex flex-col mt-4">
           <a
             href="https://github.com/fuma-nama/fuma-lofi"
             target="_blank"
-            className="hover:text-purple-50"
+            className={cn(
+              buttonVariants({
+                variant: "secondary",
+                className: "justify-center",
+              }),
+            )}
             rel="noreferrer noopener"
           >
             GitHub

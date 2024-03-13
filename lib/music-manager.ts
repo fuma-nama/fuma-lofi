@@ -3,6 +3,7 @@ import {
   createQueueManager,
   QueueItem,
   QueueManager,
+  QueueManagerOptions,
 } from "@/lib/queue-manager";
 import { createStorageManager, StorageManager } from "@/lib/storage-manager";
 
@@ -22,13 +23,15 @@ export interface MusicManager {
   setTime(time: number): void;
 }
 
-export interface MusicManagerOptions {
+export interface MusicManagerOptions
+  extends Omit<QueueManagerOptions, "onUpdate"> {
   onNext?: (song: QueueItem | undefined) => void;
   onStateChange?: () => void;
   onTimeUpdate?: (currentTime: number, duration: number) => void;
 }
 
 export function createMusicManager({
+  onSongListUpdated,
   ...options
 }: MusicManagerOptions): MusicManager {
   const context = new AudioContext();
@@ -53,6 +56,7 @@ export function createMusicManager({
       options?.onNext?.(song);
       options.onTimeUpdate?.(0, 0);
     },
+    onSongListUpdated,
   });
 
   const init = () => {

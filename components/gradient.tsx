@@ -10,7 +10,6 @@ const colorSets = [
 
 export function Gradient({ currentId }: { currentId: number }) {
   const set = useMemo(() => {
-    if (currentId === -1) return colorSets[0];
     return colorSets[currentId % colorSets.length];
   }, [currentId]);
 

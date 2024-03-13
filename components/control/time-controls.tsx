@@ -1,14 +1,13 @@
-import { cva } from "cva";
 import { cn } from "@/lib/cn";
 import { MusicManager } from "@/lib/music-manager";
-
-const buttonVariants = cva(
-  "*:size-5 rounded-full p-1.5 bg-purple-200/10 hover:bg-purple-200/20",
-);
+import { buttonVariants } from "@/components/ui/button";
+import dynamic from "next/dynamic";
 
 export interface TimeControlsProps {
   musicManager: MusicManager;
 }
+
+const CreateCustomSong = dynamic(() => import("./create-custom-song"));
 
 export function TimeControls({ musicManager }: TimeControlsProps) {
   return (
@@ -16,7 +15,7 @@ export function TimeControls({ musicManager }: TimeControlsProps) {
       {musicManager.isPaused() ? (
         <button
           aria-label="play"
-          className={cn(buttonVariants())}
+          className={cn(buttonVariants({ variant: "secondary" }))}
           onClick={() => musicManager.play()}
         >
           <svg
@@ -28,6 +27,7 @@ export function TimeControls({ musicManager }: TimeControlsProps) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
+            className="size-5"
           >
             <polygon points="6 3 20 12 6 21 6 3" />
           </svg>
@@ -35,7 +35,7 @@ export function TimeControls({ musicManager }: TimeControlsProps) {
       ) : (
         <button
           aria-label="pause"
-          className={cn(buttonVariants())}
+          className={cn(buttonVariants({ variant: "secondary" }))}
           onClick={() => musicManager.pause()}
         >
           <svg
@@ -47,12 +47,14 @@ export function TimeControls({ musicManager }: TimeControlsProps) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
+            className="size-5"
           >
             <rect width="4" height="16" x="6" y="4" />
             <rect width="4" height="16" x="14" y="4" />
           </svg>
         </button>
       )}
+      <CreateCustomSong musicManager={musicManager} />
     </div>
   );
 }

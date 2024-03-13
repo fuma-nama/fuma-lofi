@@ -10,6 +10,7 @@ export interface QueueItem extends Song {
 
 export interface QueueManagerOptions {
   onUpdate?: (song: QueueItem | undefined) => void;
+  onSongListUpdated?: (songs: QueueItem[]) => void;
 }
 
 export interface QueueManager {
@@ -34,6 +35,7 @@ export function createQueueManager(options: QueueManagerOptions): QueueManager {
 
       // Ensure index is in the songs list
       this.setIndex(this.currentIndex === -1 ? 0 : this.currentIndex);
+      options.onSongListUpdated?.(this.songs);
     },
     getPendingSongs() {
       return this.songs.slice(this.currentIndex + 1);
