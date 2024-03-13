@@ -2,10 +2,20 @@
 
 Some nice lofi music and a music player.
 
-### Songs
+![Preview](./public/preview.png)
+
+### Todo
+
+- Convert back to a vite app, as SSR functionality isn't necessary for a music player.
+
+### Custom Songs
+
+With an URL of the song (must be publicly available, or from `http://localhost`), you may add a custom song in the menu.
+
+### Demo Songs
 
 Music from [Uppbeat](https://uppbeat.io).
-It is encouraged to add your own music.
+It is encouraged to bring your own songs.
 
 - https://uppbeat.io/t/ra/cold-brew
 License code: `OZKJV3M2MXHS6NBX`
