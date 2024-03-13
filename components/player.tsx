@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, MouseEvent, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo, MouseEventHandler } from "react";
 import { Gradient } from "@/components/gradient";
 import { createMusicManager, MusicManager } from "@/lib/music-manager";
 import { createShortcutManager } from "@/lib/shortcut-manager";
@@ -8,9 +8,10 @@ import { formatSeconds } from "@/lib/format";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu } from "@/components/menu";
 import { QueueItem } from "@/lib/queue-manager";
+import { Timeline, DurationControl } from "@/components/control/timeline";
 
 export default function MusicPlayer() {
-  const durationRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<DurationControl>();
   const timeLabelRef = useRef<HTMLParagraphElement>(null);
 
   const [currentIndex, setCurrentIndex] = useState(-1);
@@ -18,13 +19,6 @@ export default function MusicPlayer() {
   const [musicManager, setMusicManager] = useState<MusicManager>();
 
   useEffect(() => {
-    const duration = durationRef.current;
-    if (!duration) return;
-
-    const updateDuration = (percent: number) => {
-      duration.style.setProperty("width", `${percent}%`);
-    };
-
     const manager = createMusicManager({
       onStateChange: () => {
         setPaused(manager.isPaused());
@@ -33,9 +27,10 @@ export default function MusicPlayer() {
         if (timeLabelRef.current) {
           timeLabelRef.current.innerText = formatSeconds(currentTime);
         }
-        updateDuration((currentTime / duration) * 100);
+
+        timelineRef.current?.((currentTime / duration) * 100);
       },
-      onNext: (song) => {
+      onNext(song) {
         setCurrentIndex(song?.id ?? -1);
       },
     });
@@ -51,7 +46,7 @@ export default function MusicPlayer() {
     };
   }, []);
 
-  const onClick = (e: MouseEvent) => {
+  const onClick: MouseEventHandler = (e) => {
     if (!musicManager || e.button !== 0) return;
 
     const target = e.target as Element;
@@ -74,14 +69,12 @@ export default function MusicPlayer() {
         ease: "easeInOut",
         duration: 0.5,
       }}
-      className="relative flex flex-col h-screen p-12 z-[2] text-purple-100 sm:p-24"
+      className="relative flex flex-col h-svh px-12 py-16 z-[2] text-purple-100 md:p-24"
       onMouseDown={onClick}
     >
       <AnimatedTitle text={paused ? "Click to Play" : "Lofi Fuma"} />
-      <div className="w-full max-w-[480px] mt-6">
-        <div className="h-1 border border-purple-100/30">
-          <div ref={durationRef} className="w-0 h-full bg-purple-100" />
-        </div>
+      <div className="w-full max-w-[500px] mt-6">
+        <Timeline musicManager={musicManager} durationRef={timelineRef} />
         <AnimatePresence mode="wait" initial={false}>
           {musicManager && currentIndex !== -1 ? (
             <SongDisplay song={musicManager.queueManager.songs[currentIndex]} />
@@ -90,7 +83,7 @@ export default function MusicPlayer() {
       </div>
       <div
         data-trigger={true}
-        className="flex flex-col-reverse gap-4 justify-between mt-auto items-end sm:flex-row"
+        className="flex flex-row gap-4 mt-auto items-end justify-center md:justify-between"
       >
         {musicManager && <Menu musicManager={musicManager} />}
         <div className="w-full max-w-[250px]" data-trigger-container={true}>
@@ -157,7 +150,7 @@ function AnimatedTitle({ text }: { text: string }) {
   let index = 0;
 
   return (
-    <h1 className="text-8xl font-light leading-[0.9] tracking-[-0.1em] sm:text-9xl sm:leading-[0.9] sm:tracking-[-0.1em]">
+    <h1 className="text-8xl font-light leading-[0.9] tracking-[-0.1em] md:text-9xl md:leading-[0.9] md:tracking-[-0.1em]">
       {words.map((word, i) => (
         <motion.span key={i} className="inline-block mr-8 break-keep">
           {word.split("").map((c, j) => (
@@ -170,7 +163,7 @@ function AnimatedTitle({ text }: { text: string }) {
                 opacity: 1,
                 transition: {
                   ease: "easeInOut",
-                  delay: index++ * 0.05,
+                  delay: index++ * 0.04,
                   duration: 0.2,
                 },
               }}

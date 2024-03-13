@@ -12,12 +12,13 @@ export interface MusicManager {
   analyser: AnalyserNode;
 
   play(): void;
-  isPaused(): boolean;
-  setPlaying(song: Song): void;
   pause(): void;
+  setPlaying(song: Song): void;
   destroy(): void;
 
+  isPaused(): boolean;
   getTime(): number;
+  getDuration(): number;
   setTime(time: number): void;
 }
 
@@ -50,6 +51,7 @@ export function createMusicManager({
     onUpdate: (song) => {
       if (song) manager.setPlaying(song);
       options?.onNext?.(song);
+      options.onTimeUpdate?.(0, 0);
     },
   });
 
@@ -71,6 +73,9 @@ export function createMusicManager({
     analyser,
     getTime(): number {
       return audio.currentTime;
+    },
+    getDuration(): number {
+      return audio.duration;
     },
     setTime(time: number) {
       audio.currentTime = time;

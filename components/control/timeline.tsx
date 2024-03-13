@@ -1,58 +1,86 @@
-import { cva } from "cva";
-import { cn } from "@/lib/cn";
 import { MusicManager } from "@/lib/music-manager";
+import { MutableRefObject, useEffect, useRef } from "react";
 
-const buttonVariants = cva(
-  "*:size-5 rounded-full p-1.5 bg-purple-200/10 hover:bg-purple-200/20",
-);
+export type DurationControl = (percent: number) => void;
 
-export interface TimeControlsProps {
-  musicManager: MusicManager;
-}
+export function Timeline({
+  musicManager,
+  durationRef,
+}: {
+  musicManager?: MusicManager;
+  durationRef: MutableRefObject<DurationControl | undefined>;
+}) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const isDrawingRef = useRef(false);
 
-export function TimeControls({ musicManager }: TimeControlsProps) {
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!musicManager || !container) return;
+
+    const setTimeline = (percent: number) => {
+      timelineRef.current?.style.setProperty("width", `${percent}%`);
+    };
+
+    durationRef.current = (percent) => {
+      if (isDrawingRef.current) return;
+
+      setTimeline(percent);
+    };
+
+    const getPercent = (x: number) => {
+      const bound = container.getBoundingClientRect();
+      return Math.min((x - bound.left) / bound.width, 1);
+    };
+
+    const onStart = (e: Event) => {
+      isDrawingRef.current = true;
+      e.preventDefault();
+    };
+
+    const onMove = (e: TouchEvent | MouseEvent) => {
+      if (!isDrawingRef.current) return;
+      const x = "clientX" in e ? e.clientX : e.touches[0].clientX;
+
+      setTimeline(getPercent(x) * 100);
+      e.preventDefault();
+    };
+
+    const onStop = (e: TouchEvent | MouseEvent) => {
+      if (!isDrawingRef.current) return;
+      const x = "clientX" in e ? e.clientX : e.changedTouches[0].clientX;
+
+      isDrawingRef.current = false;
+      musicManager.setTime(getPercent(x) * musicManager.getDuration());
+      e.preventDefault();
+    };
+
+    window.addEventListener("pointermove", onMove, { passive: false });
+    window.addEventListener("mousemove", onMove, { passive: false });
+
+    window.addEventListener("touchend", onStop, { passive: false });
+    window.addEventListener("mouseup", onStop, { passive: false });
+
+    container.addEventListener("touchstart", onStart, { passive: false });
+    container.addEventListener("mousedown", onStart, { passive: false });
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("mousemove", onMove);
+
+      window.removeEventListener("touchend", onStop);
+      window.removeEventListener("mouseup", onStop);
+
+      container.removeEventListener("touchstart", onStart);
+      container.removeEventListener("mousedown", onStart);
+    };
+  }, [musicManager]);
+
   return (
-    <div className="flex flex-row gap-2 mt-2">
-      {musicManager.isPaused() ? (
-        <button
-          aria-label="play"
-          className={cn(buttonVariants())}
-          onClick={() => musicManager.play()}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polygon points="6 3 20 12 6 21 6 3" />
-          </svg>
-        </button>
-      ) : (
-        <button
-          aria-label="pause"
-          className={cn(buttonVariants())}
-          onClick={() => musicManager.pause()}
-        >
-          <svg
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect width="4" height="16" x="6" y="4" />
-            <rect width="4" height="16" x="14" y="4" />
-          </svg>
-        </button>
-      )}
+    <div
+      ref={containerRef}
+      className="h-2 border border-purple-100/30 cursor-pointer"
+    >
+      <div ref={timelineRef} className="w-0 h-full bg-purple-100" />
     </div>
   );
 }

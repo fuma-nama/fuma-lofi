@@ -7,6 +7,10 @@ export interface SongListProps {
 }
 
 export function SongList({ musicManager }: SongListProps) {
+  const onPlay = (item: QueueItem) => {
+    musicManager.queueManager.setIndex(item.id);
+  };
+
   return (
     <div className="flex flex-col -mx-2 -mt-2">
       {musicManager.queueManager.songs.map((song) => (
@@ -14,7 +18,7 @@ export function SongList({ musicManager }: SongListProps) {
           key={song.id}
           song={song}
           playing={song.id === musicManager.queueManager.currentIndex}
-          musicManager={musicManager}
+          onPlay={onPlay}
         />
       ))}
     </div>
@@ -24,11 +28,11 @@ export function SongList({ musicManager }: SongListProps) {
 function Item({
   song,
   playing,
-  musicManager,
+  onPlay,
 }: {
   song: QueueItem;
   playing: boolean;
-  musicManager: MusicManager;
+  onPlay: (item: QueueItem) => void;
 }) {
   return (
     <button
@@ -36,9 +40,7 @@ function Item({
         "flex flex-row text-left items-center gap-3 rounded-xl p-2 transition-colors",
         playing ? "bg-purple-400/20" : "hover:bg-purple-200/5",
       )}
-      onClick={() => {
-        musicManager.queueManager.setIndex(song.id);
-      }}
+      onClick={() => onPlay(song)}
     >
       {song.picture && (
         <img alt="picture" src={song.picture} className="size-12 rounded-md" />
