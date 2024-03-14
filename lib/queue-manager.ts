@@ -31,9 +31,9 @@ export function createQueueManager(options: QueueManagerOptions): QueueManager {
     currentIndex: -1,
     songs: [],
     setSongs(songs: Song[]) {
-      this.songs = songs.map((song, i) => ({ id: i, ...song }));
+      this.songs = songs.map((song, i) => ({ ...song, id: i }));
 
-      // Ensure index is in the songs list
+      // Ensure index is in the songs list, or is the song replaced
       this.setIndex(this.currentIndex === -1 ? 0 : this.currentIndex);
       options.onSongListUpdated?.(this.songs);
     },
@@ -51,9 +51,7 @@ export function createQueueManager(options: QueueManagerOptions): QueueManager {
       else if (id < 0) target = songs.length - 1;
       else target = id;
 
-      if (this.currentIndex === target) return;
       this.currentIndex = target;
-
       options.onUpdate?.(this.getCurrentSong());
     },
     next() {

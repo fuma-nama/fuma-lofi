@@ -1,6 +1,6 @@
 import { StorageManager } from "@/lib/storage-manager";
 import { Song } from "@/music/data";
-import { FormEventHandler, useMemo, useState } from "react";
+import { FormEventHandler, useState } from "react";
 import { cva } from "cva";
 import { cn } from "@/lib/cn";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -20,7 +20,13 @@ export function CreateCustomSongDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className={cn(buttonVariants({ variant: "secondary" }))}>
+      <DialogTrigger
+        className={cn(
+          buttonVariants({
+            variant: "secondary",
+          }),
+        )}
+      >
         Custom Songs
       </DialogTrigger>
       <DialogContent>
