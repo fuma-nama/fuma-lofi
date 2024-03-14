@@ -11,7 +11,7 @@ const inputVariants = cva(
   "bg-transparent rounded-lg bg-purple-200/10 text-sm px-2 py-1 -mx-2 placeholder:text-purple-200/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400",
 );
 
-export default function createCustomSongDialog({
+export function CreateCustomSongDialog({
   musicManager,
 }: {
   musicManager: MusicManager;
@@ -46,8 +46,6 @@ function CreateCustomSong({
   storage: StorageManager;
   onClose: () => void;
 }) {
-  const songs = useMemo(() => storage.getCustomSongs(), [storage]);
-
   return (
     <div>
       <h2 className="font-medium">Add Custom Song</h2>
@@ -56,7 +54,7 @@ function CreateCustomSong({
       </p>
       <NewSong
         onAdd={(song) => {
-          const update = [...songs, song];
+          const update = [...storage.getCustomSongs(), song];
 
           storage.saveCustomSongs(update);
           onClose();

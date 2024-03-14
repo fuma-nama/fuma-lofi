@@ -1,4 +1,3 @@
-"use client";
 import { useEffect, useRef, useState, useMemo, MouseEventHandler } from "react";
 import { Gradient } from "@/components/gradient";
 import { createMusicManager, MusicManager } from "@/lib/music-manager";

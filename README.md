@@ -4,10 +4,6 @@ Some nice lofi music and a music player.
 
 ![Preview](./public/preview.png)
 
-### Todo
-
-- Convert back to a vite app, as SSR functionality isn't necessary for a music player.
-
 ### Custom Songs
 
 With an URL of the song (must be publicly available, or from `http://localhost`), you may add a custom song in the menu.

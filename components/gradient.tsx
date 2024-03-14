@@ -1,4 +1,3 @@
-"use client";
 import { ShaderGradient, ShaderGradientCanvas } from "shadergradient";
 import React, { useMemo } from "react";
 

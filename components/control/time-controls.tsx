@@ -1,13 +1,11 @@
 import { cn } from "@/lib/cn";
 import { MusicManager } from "@/lib/music-manager";
 import { buttonVariants } from "@/components/ui/button";
-import dynamic from "next/dynamic";
+import { CreateCustomSongDialog } from "./create-custom-song";
 
 export interface TimeControlsProps {
   musicManager: MusicManager;
 }
-
-const CreateCustomSong = dynamic(() => import("./create-custom-song"));
 
 export function TimeControls({ musicManager }: TimeControlsProps) {
   return (
@@ -54,7 +52,7 @@ export function TimeControls({ musicManager }: TimeControlsProps) {
           </svg>
         </button>
       )}
-      <CreateCustomSong musicManager={musicManager} />
+      <CreateCustomSongDialog musicManager={musicManager} />
     </div>
   );
 }
