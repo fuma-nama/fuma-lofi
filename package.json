@@ -2,6 +2,7 @@
   "name": "fuma-lofi",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -10,12 +11,11 @@
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.0.17",
-    "@fontsource/inter": "^5.0.17",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.0.7",
     "@react-spring/three": "^9.7.3",
-    "@react-three/drei": "^9.56.5",
-    "@react-three/fiber": "^8.12.0",
+    "@react-three/drei": "^9.47.1",
+    "@react-three/fiber": "^8.12.2",
     "@vitejs/plugin-react": "^4.2.1",
     "cva": "npm:class-variance-authority@^0.7.0",
     "framer-motion": "^10.9.2",
@@ -24,7 +24,7 @@
     "react-dom": "^18.2.0",
     "shadergradient": "^1.2.5",
     "tailwind-merge": "^2.2.1",
-    "three": "^0.150.1",
+    "three": "^0.150.0",
     "three-stdlib": "^2.21.6",
     "vite": "^5.1.6"
   },
