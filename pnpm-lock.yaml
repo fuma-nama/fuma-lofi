@@ -4,6 +4,12 @@ dependencies:
   '@fontsource-variable/inter':
     specifier: ^5.0.17
     version: 5.0.17
+  '@radix-ui/primitive':
+    specifier: ^1.0.1
+    version: 1.0.1
+  '@radix-ui/react-compose-refs':
+    specifier: ^1.0.1
+    version: 1.0.1(@types/react@18.2.64)(react@18.2.0)
   '@radix-ui/react-dialog':
     specifier: ^1.0.5
     version: 1.0.5(@types/react-dom@18.2.21)(@types/react@18.2.64)(react-dom@18.2.0)(react@18.2.0)

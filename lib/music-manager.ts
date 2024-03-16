@@ -21,6 +21,9 @@ export interface MusicManager {
   getTime(): number;
   getDuration(): number;
   setTime(time: number): void;
+
+  getVolume(): number;
+  setVolume(v: number): void;
 }
 
 export interface MusicManagerOptions
@@ -86,6 +89,12 @@ export function createMusicManager({
     },
     isPaused(): boolean {
       return context.state === "suspended" || (audio != null && audio.paused);
+    },
+    getVolume(): number {
+      return audio.volume;
+    },
+    setVolume(v: number) {
+      audio.volume = v;
     },
     async play() {
       // When AudioContext is initialized before the first interaction, it is suspended

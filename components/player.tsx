@@ -78,7 +78,7 @@ export default function MusicPlayer() {
       onMouseDown={onClick}
     >
       <AnimatedTitle text={paused ? "Click to Play" : "Lofi Fuma"} />
-      <div className="w-full max-w-[500px] mt-6">
+      <div className="w-full max-w-[500px] mt-2">
         <Timeline musicManager={musicManager} durationRef={timelineRef} />
         <AnimatePresence mode="wait" initial={false}>
           {currentSong ? <SongDisplay song={currentSong} /> : null}
@@ -135,7 +135,7 @@ function SongDisplay({ song }: { song: QueueItem }) {
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: -10, opacity: 0 }}
       transition={{ ease: "easeInOut", duration: 0.3 }}
-      className="flex flex-row items-center gap-4 mt-4 rounded-xl p-3"
+      className="flex flex-row items-center gap-4 rounded-xl p-3"
     >
       {song.picture && (
         <img alt="picture" src={song.picture} className="size-14 rounded-md" />

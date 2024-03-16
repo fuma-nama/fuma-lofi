@@ -4,10 +4,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { SongList } from "@/components/control/song-list";
-import { TimeControls } from "@/components/control/time-controls";
+import { PlayerControls } from "@/components/control/player-controls";
 import { MusicManager } from "@/lib/music-manager";
 import { cn } from "@/lib/cn";
 import { buttonVariants } from "@/components/ui/button";
+import { CreateCustomSongDialog } from "@/components/control/create-custom-song";
 
 export function Menu({ musicManager }: { musicManager: MusicManager }) {
   return (
@@ -40,15 +41,16 @@ export function Menu({ musicManager }: { musicManager: MusicManager }) {
       </PopoverTrigger>
       <PopoverContent>
         <SongList musicManager={musicManager} />
-        <TimeControls musicManager={musicManager} />
-        <div className="flex flex-col mt-4">
+        <PlayerControls musicManager={musicManager} />
+        <div className="flex flex-row gap-2 mt-4">
+          <CreateCustomSongDialog musicManager={musicManager} />
           <a
             href="https://github.com/fuma-nama/fuma-lofi"
             target="_blank"
             className={cn(
               buttonVariants({
                 variant: "secondary",
-                className: "justify-center",
+                className: "flex-1",
               }),
             )}
             rel="noreferrer noopener"

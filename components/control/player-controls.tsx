@@ -1,14 +1,15 @@
 import { cn } from "@/lib/cn";
 import { MusicManager } from "@/lib/music-manager";
 import { buttonVariants } from "@/components/ui/button";
-import { CreateCustomSongDialog } from "./create-custom-song";
 import { Song } from "@/music/data";
+import { Slider } from "@/components/ui/slider";
+import { useState } from "react";
 
 export interface TimeControlsProps {
   musicManager: MusicManager;
 }
 
-export function TimeControls({ musicManager }: TimeControlsProps) {
+export function PlayerControls({ musicManager }: TimeControlsProps) {
   const randomize = () => {
     const songs = [...musicManager.queueManager.songs];
     const newList: Song[] = [];
@@ -24,7 +25,7 @@ export function TimeControls({ musicManager }: TimeControlsProps) {
   };
 
   return (
-    <div className="flex flex-row gap-2 mt-2">
+    <div className="flex flex-row items-center gap-2 mt-2">
       {musicManager.isPaused() ? (
         <button
           aria-label="play"
@@ -91,7 +92,40 @@ export function TimeControls({ musicManager }: TimeControlsProps) {
           <path d="M18 9h.01" />
         </svg>
       </button>
-      <CreateCustomSongDialog musicManager={musicManager} />
+      <VolumeSlider musicManager={musicManager} />
     </div>
+  );
+}
+
+function VolumeSlider({ musicManager }: { musicManager: MusicManager }) {
+  const [value, setValue] = useState(() => musicManager.getVolume());
+
+  return (
+    <>
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="size-4"
+      >
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+        {value > 0.2 && <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />}
+        {value > 0.7 && <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />}
+      </svg>
+      <Slider
+        className="flex-1 rounded-full"
+        aria-valuetext="Volume"
+        value={value}
+        onValueChange={(v) => {
+          setValue(v);
+          musicManager.setVolume(v);
+        }}
+      />
+    </>
   );
 }

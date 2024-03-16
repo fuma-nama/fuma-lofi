@@ -1,7 +1,7 @@
 import { cva } from "cva";
 
 export const buttonVariants = cva(
-  "inline-flex items-center gap-2 text-sm font-medium rounded-md px-3 py-2 transition-colors focus-visible:outline-none",
+  "inline-flex items-center justify-center gap-2 text-sm font-medium rounded-md px-3 py-2 transition-colors focus-visible:outline-none",
   {
     variants: {
       variant: {
