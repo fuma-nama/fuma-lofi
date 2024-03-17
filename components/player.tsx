@@ -63,7 +63,6 @@ export default function MusicPlayer() {
 
     if (musicManager.isPaused()) musicManager.play();
     else musicManager.pause();
-    e.preventDefault();
   };
 
   return (

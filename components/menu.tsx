@@ -14,6 +14,7 @@ export function Menu({ musicManager }: { musicManager: MusicManager }) {
   return (
     <Popover>
       <PopoverTrigger
+        id="menu-trigger"
         aria-label="Menu"
         className={cn(
           buttonVariants({
@@ -42,7 +43,7 @@ export function Menu({ musicManager }: { musicManager: MusicManager }) {
       <PopoverContent>
         <SongList musicManager={musicManager} />
         <PlayerControls musicManager={musicManager} />
-        <div className="flex flex-row gap-2 mt-4">
+        <div className="grid grid-cols-2 gap-2 mt-4">
           <CreateCustomSongDialog musicManager={musicManager} />
           <a
             href="https://github.com/fuma-nama/fuma-lofi"
@@ -50,7 +51,6 @@ export function Menu({ musicManager }: { musicManager: MusicManager }) {
             className={cn(
               buttonVariants({
                 variant: "secondary",
-                className: "flex-1",
               }),
             )}
             rel="noreferrer noopener"

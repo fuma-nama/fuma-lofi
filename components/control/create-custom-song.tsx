@@ -23,7 +23,6 @@ export function CreateCustomSongDialog({
       <DialogTrigger
         className={cn(
           buttonVariants({
-            className: "flex-1",
             variant: "secondary",
           }),
         )}

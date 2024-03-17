@@ -15,6 +15,9 @@ export function createShortcutManager({
 }: ShortcutManagerOptions): ShortcutManager {
   return {
     onPress(event: KeyboardEvent) {
+      const target = event.target as HTMLElement;
+      if (target !== document.body && target.id !== "menu-trigger") return;
+
       switch (event.key) {
         case "ArrowUp":
           musicManager.queueManager.previous();

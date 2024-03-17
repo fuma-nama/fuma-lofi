@@ -1,6 +1,7 @@
 import { MusicManager } from "@/lib/music-manager";
 import { cn } from "@/lib/cn";
 import { QueueItem } from "@/lib/queue-manager";
+import { buttonVariants } from "@/components/ui/button";
 
 export interface SongListProps {
   musicManager: MusicManager;
@@ -50,7 +51,7 @@ function Item({
   return (
     <button
       className={cn(
-        "relative flex flex-row text-left items-center gap-3 rounded-xl p-2 transition-colors group outline-purple-400",
+        "relative flex flex-row text-left items-center gap-3 rounded-xl p-2 transition-colors group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-400",
         playing ? "bg-purple-400/20" : "hover:bg-purple-200/5",
       )}
       onClick={() => onPlay(song)}
@@ -64,35 +65,40 @@ function Item({
         <p className="text-sm font-medium">{song.name}</p>
         <p className="text-xs text-purple-200">{song.author}</p>
       </div>
-      <div
-        aria-label="Delete Custom Song"
-        className={cn(
-          "absolute top-0 right-0 p-1 bg-red-600/50 rounded-lg opacity-0 transition-opacity group-hover:opacity-100",
-          !song.isCustom && "hidden",
-        )}
-        onClick={(e) => {
-          onRemove(song);
-          e.stopPropagation();
-        }}
-      >
-        <svg
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="size-4"
+      {song.isCustom && (
+        <div
+          aria-label="Delete Custom Song"
+          className={cn(
+            buttonVariants({
+              variant: "destructive",
+              className:
+                "absolute top-0 right-0 opacity-0 transition-opacity group-hover:opacity-100",
+            }),
+          )}
+          onClick={(e) => {
+            onRemove(song);
+            e.stopPropagation();
+          }}
         >
-          <path d="M3 6h18" />
-          <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-          <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-          <line x1="10" x2="10" y1="11" y2="17" />
-          <line x1="14" x2="14" y1="11" y2="17" />
-        </svg>
-      </div>
+          <svg
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="size-4"
+          >
+            <path d="M3 6h18" />
+            <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
+            <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
+            <line x1="10" x2="10" y1="11" y2="17" />
+            <line x1="14" x2="14" y1="11" y2="17" />
+          </svg>
+        </div>
+      )}
     </button>
   );
 }

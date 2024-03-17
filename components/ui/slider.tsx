@@ -18,7 +18,6 @@ export interface SliderProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Slider = forwardRef<HTMLDivElement, SliderProps>(
   ({ value, onValueChange, onSlideEnd, onSlideStart, ...props }, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const thumbRef = useRef<HTMLSpanElement>(null);
     const mergedRef = useComposedRefs(ref, containerRef);
 
     const getPercent = (x: number) => {
@@ -36,6 +35,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         {...props}
         className={cn("flex touch-none h-6 py-2", props.className)}
         onPointerDown={composeEventHandlers(props.onPointerDown, (event) => {
+          const thumb = containerRef.current?.children[0];
           const target = event.target as HTMLElement;
           target.setPointerCapture(event.pointerId);
           // Prevent browser focus behaviour because we focus a thumb manually when values change.
@@ -44,7 +44,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
 
           // Touch devices have a delay before focusing so won't focus if touch immediately moves
           // away from target (sliding). We want thumb to focus regardless.
-          if (thumbRef.current === target) {
+          if (thumb && thumb === target) {
             target.focus();
           }
         })}
@@ -64,10 +64,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
           }
         })}
       >
-        <span
-          ref={thumbRef}
-          className="size-full border rounded-full border-purple-100/30 overflow-hidden"
-        >
+        <span className="size-full border rounded-full border-purple-100/30 overflow-hidden">
           <span
             role="slider"
             aria-valuemin={0}
